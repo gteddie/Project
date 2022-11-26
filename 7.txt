@@ -1,0 +1,1 @@
+DataBean [stockId=7, stockNum=0057, stockName=富邦摩台, closePrice=82.95, monAvgPrice=77.79]

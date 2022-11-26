@@ -19,7 +19,7 @@ public class ImgDaoImpl implements ImgDao {
 
 	@Override
 	public void insert(String fileName) throws FileNotFoundException, IOException, SQLException {
-		File dir = new File("C:\\_java\\eclipse-workspace\\Project\\projectimg");
+		File dir = new File("./projectimg");
 		String sql = "INSERT INTO ProjectImage(FileName, FileContent, FileType) VALUES (?,?,?);";
 		if (!dir.exists()) {
 			dir.mkdir();
@@ -49,7 +49,7 @@ public class ImgDaoImpl implements ImgDao {
 	public void download(int imgID) throws SQLException, FileNotFoundException, IOException {
 		// TODO Auto-generated method stub
 		String sql = "SELECT * FROM ProjectImage WHERE FileID = ?";
-		File dir = new File("C:\\_java\\eclipse-workspace\\Project\\imgoutput");
+		File dir = new File("./imgoutput");
 		if (!dir.exists()) {
 			dir.mkdir();
 		} 

@@ -1,0 +1,1 @@
+DataBean [stockId=2, stockNum=0051, stockName=元大中型100, closePrice=52.4, monAvgPrice=51.77]

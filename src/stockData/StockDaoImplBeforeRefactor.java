@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 import system.SystemConstant;
 
-public class StockDataDaoImpl implements StockDataDao {
+public class StockDaoImplBeforeRefactor implements StockDao {
 
 	@Override
 	public void downloadData(String url) throws IOException, SQLException {
@@ -53,6 +54,10 @@ public class StockDataDaoImpl implements StockDataDao {
 			stmtC.executeUpdate();
 			System.out.println("successfully create database!");
 			for (String[] sar : al) {
+//				Double closePrice = sar[2] == "" ? null : Double.parseDouble(sar[2]);
+//				Double MonAvgPrice = sar[3] == "" ? null : Double.parseDouble(sar[3]);
+//				StockBean bean = new StockBean(null, sar[1], sar[2],closePrice,MonAvgPrice);
+//				insertData(bean);
 				stmtI.setString(1, sar[0]);
 				stmtI.setString(2, sar[1]);
 				if (sar[2].equals("")) {
@@ -73,7 +78,27 @@ public class StockDataDaoImpl implements StockDataDao {
 	}
 
 	@Override
-	public void insertData(StockBean bean) {
+	public void insertData(StockBean bean) throws SQLException {
+		String insertSql = "INSERT INTO STOCK(StockNum, StockName, ClosePrice, MonAvgPrice) VALUES(?,?,?,?)";
+		try (Connection con = DriverManager.getConnection(SystemConstant.getDBURL());
+				PreparedStatement stmtI = con.prepareStatement(insertSql);
+
+		) {
+			stmtI.setString(1, bean.getStockNum());
+			stmtI.setString(2, bean.getStockName());
+			if(bean.getClosePrice() == null) {
+				stmtI.setNull(3, Types.DOUBLE);
+			}else {				
+				stmtI.setDouble(3, bean.getClosePrice());
+			};
+			if(bean.getClosePrice() == null) {
+				stmtI.setNull(4, Types.DOUBLE);
+			}else {				
+				stmtI.setDouble(4, bean.getMonAvgPrice());
+			};
+			stmtI.executeUpdate();
+		}
+		
 
 	}
 
@@ -87,7 +112,7 @@ public class StockDataDaoImpl implements StockDataDao {
 
 			stmt.setInt(1, key);
 			ResultSet rs = stmt.executeQuery();
-			File dir = new File("C:\\Users\\Student\\Desktop");
+			File dir = new File("./");
 			if (rs.next()) {
 				StockBean bean = new StockBean(rs.getInt("StockId"), rs.getString("StockNum"),
 						rs.getString("StockName"), rs.getDouble("ClosePrice"), rs.getDouble("MonAVGPrice"));
@@ -108,10 +133,11 @@ public class StockDataDaoImpl implements StockDataDao {
 	@Override
 	public void deleteData(String stockName) throws SQLException {
 		// TODO Auto-generated method stub
-		String sql = "DELETE FROM Stock WHERE StockName = ?";
+		String sql = "DELETE FROM Stock WHERE StockName LIKE \'%" + stockName + "%\'";
+		System.out.println(sql);
 		try (Connection con = DriverManager.getConnection(SystemConstant.getDBURL());
 				PreparedStatement stmt = con.prepareStatement(sql);) {
-			stmt.setString(1, stockName);
+//			stmt.setString(1, stockName);
 			int num = stmt.executeUpdate();
 			System.out.println(num + " of data with stockname = " + stockName + "deleted");
 
@@ -122,5 +148,13 @@ public class StockDataDaoImpl implements StockDataDao {
 	@Override
 	public void deleteData(Double closePrice) {
 	}
+	
+	
+	
+	public void insertStockPic(String stockName, String picType) throws MalformedURLException {
+		String url = String.format("https://goodinfo.tw/tw/image/StockPrice/PRICE_%s_0056.gif", picType);
+		URL url_ = new URL(url);
+	}
+	
 
 }

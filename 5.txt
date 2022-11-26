@@ -1,0 +1,1 @@
+DataBean [stockId=5, stockNum=0055, stockName=元大MSCI金融, closePrice=21.68, monAvgPrice=21.38]

@@ -4,9 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public interface StockDataDao {
+public interface StockDao {
 
-	public void downloadData(String url) throws IOException, SQLException;
+	public void createTable() throws IOException, SQLException;
 
 	public void readData(int key) throws SQLException, FileNotFoundException, IOException;
 
@@ -16,5 +16,5 @@ public interface StockDataDao {
 	
 //	public void deleteData(Double monAvgPrice);
 	
-	public void insertData(StockBean bean);
+	public void insertData(StockBean bean) throws SQLException;
 }

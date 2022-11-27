@@ -1,16 +1,11 @@
 package stockData;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,38 +14,14 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.InputMismatchException;
 
+import downloader.StockDownloader;
 import system.SystemConstant;
 
 public class StockDaoImpl implements StockDao {
-
-	public ArrayList<StockBean> downloadData(String url) throws IOException, SQLException {
-		URL url_ = new URL(url);
-		ArrayList<StockBean> beanList = new ArrayList<>();
-		// Load data from url
-		try (InputStreamReader isr = new InputStreamReader(url_.openStream());
-				BufferedReader br = new BufferedReader(isr);
-
-		) {
-			String line = "";
-			String[] data;
-			br.readLine();
-			int count = 0;
-			while ((line = br.readLine()) != null) {
-				data = line.replace("\"", "").split(",");
-				Double closePrice = data[2] == "" ? null : Double.parseDouble(data[2]);
-				Double MonAvgPrice = data[3] == "" ? null : Double.parseDouble(data[3]);
-				StockBean bean = new StockBean(null, data[0], data[1], closePrice, MonAvgPrice);
-				beanList.add(bean);
-				count++;
-			}
-			System.out.printf("Successfully download %d data......%n", count);
-			return beanList;
-		}
-	}
-
 	@Override
-	public void createTable() throws IOException, SQLException {
+	public void prepareTable() throws IOException, SQLException {
 		// create table and drop table
 		String dropTableSql = "DROP TABLE IF EXISTS dbo.Stock";
 		String createTableSql = "CREATE TABLE Stock(" + "StockId INT NOT NULL IDENTITY,"
@@ -62,11 +33,15 @@ public class StockDaoImpl implements StockDao {
 			stmtD.executeUpdate();
 			stmtC.executeUpdate();
 			System.out.println("successfully create stock table......");
+			StockDownloader downloader = new StockDownloader();
+			ArrayList<StockBean> beanList = downloader
+					.downloadStockData("https://www.twse.com.tw/exchangeReport/STOCK_DAY_AVG_ALL?response=open_data");
+			insertBatch(beanList);
 		}
 	}
 
 	@Override
-	public void insertData(StockBean bean) throws SQLException {
+	public void insert(StockBean bean) throws SQLException {
 		String insertSql = "INSERT INTO STOCK(StockNum, StockName, ClosePrice, MonAvgPrice) VALUES(?,?,?,?)";
 		try (Connection con = DriverManager.getConnection(SystemConstant.getDburl());
 				PreparedStatement stmtI = con.prepareStatement(insertSql);
@@ -91,8 +66,8 @@ public class StockDaoImpl implements StockDao {
 		}
 
 	}
-
-	public void insertBatchData(Collection<StockBean> beanCollection) throws SQLException {
+	@Override
+	public void insertBatch(Collection<StockBean> beanCollection) throws SQLException {
 		String insertSql = "INSERT INTO STOCK(StockNum, StockName, ClosePrice, MonAvgPrice) VALUES(?,?,?,?)";
 		try (Connection con = DriverManager.getConnection(SystemConstant.getDburl());
 				PreparedStatement stmtI = con.prepareStatement(insertSql);
@@ -127,7 +102,7 @@ public class StockDaoImpl implements StockDao {
 	}
 
 	@Override
-	public void readData(int key) throws SQLException, FileNotFoundException, IOException {
+	public void read(int key) throws SQLException, FileNotFoundException, IOException {
 		String sql = "SELECT * FROM Stock WHERE StockId = ?";
 		try (Connection con = DriverManager.getConnection(SystemConstant.getDburl());
 				PreparedStatement stmt = con.prepareStatement(sql);
@@ -158,12 +133,25 @@ public class StockDaoImpl implements StockDao {
 	}
 
 	@Override
-	public void deleteData(String stockName) throws SQLException {
-		// TODO Auto-generated method stub
-		String sql = "DELETE FROM Stock WHERE StockName LIKE \'%" + stockName + "%\'";
+	public void delete(String stockName, String delType) throws SQLException {
+		String sql = "";
+		switch (delType) {
+		case "name":
+			sql = "DELETE FROM Stock WHERE StockName LIKE ?";
+			break;
+		case "stocknum":
+			sql = "DELETE FROM Stock WHERE StockName = ?";
+			break;
+		default:
+			throw new InputMismatchException("invalid input type for deleting record");
+		}
 		try (Connection con = DriverManager.getConnection(SystemConstant.getDburl());
 				PreparedStatement stmt = con.prepareStatement(sql);) {
-//			stmt.setString(1, stockName);
+			if (delType == "name") {
+				stmt.setString(1, "%" + stockName + "%");
+			} else {
+				stmt.setString(1, stockName);
+			}
 			int num = stmt.executeUpdate();
 			if (num == 0) {
 				System.out.println("Couldn't find data with \"" + stockName + "\" in their stockName");
@@ -174,25 +162,6 @@ public class StockDaoImpl implements StockDao {
 
 		}
 
-	}
-
-	@Override
-	public void deleteData(Double closePrice) {
-	}
-
-	public void insertStockPic(String stockNum, String picType) throws IOException {
-		String url = String.format("https://goodinfo.tw/tw/image/StockPrice/PRICE_%s_0056.gif", picType);
-		URL url_ = new URL(url);
-		File dir = new File(SystemConstant.getStockimg());
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
-		File file = new File(dir,stockNum + );
-		try (BufferedInputStream bis = new BufferedInputStream(url_.openStream());) {
-			byte[] img = bis.readAllBytes();
-		}
-		
-		
 	}
 
 }

@@ -1,13 +1,14 @@
+package system;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Scanner;
-import image.*;
-import stockData.StockBean;
-import stockData.StockDao;
+
+import image.ImgDao;
+import image.ImgDaoImpl;
 import stockData.StockDaoImpl;
+
 
 public class Mainframe {
 
@@ -27,15 +28,13 @@ public class Mainframe {
 			ImgDao img = new ImgDaoImpl();
 			switch (option) {
 			case "一":
-				dao.createTable();
-				ArrayList<StockBean> beanList = dao.downloadData("https://www.twse.com.tw/exchangeReport/STOCK_DAY_AVG_ALL?response=open_data");
-				dao.insertBatchData(beanList);
+				dao.prepareTable();
 				openList();
 				break;
 			case "二":
 				System.out.print("請輸入stockId: ");
 				if (scan.hasNextInt()) {
-					dao.readData(scan.nextInt());
+					dao.read(scan.nextInt());
 				}
 				System.out.println("資料查詢成功!\n");
 				openList();
@@ -43,14 +42,13 @@ public class Mainframe {
 			case "三":
 				System.out.print("請輸入股票名稱: ");
 				if (scan.hasNext()) {
-					dao.deleteData(scan.next());
+					dao.delete(scan.next(),"name");
 				}
 				System.out.println("資料刪除成功!\n");				
 				openList();
 				break;
 			case "四":
-				String filePath = "./projectimg";
-				File dir = new File(filePath);
+				File dir = new File(SystemConstant.getProjectimg());
 				for (String fileName : dir.list()) {
 					img.insert(fileName);
 				}
@@ -59,13 +57,11 @@ public class Mainframe {
 				break;
 			case "五":
 				System.out.print("請輸入圖片ID: ");
+				
 				if (scan.hasNextInt()) {
 					int n = scan.nextInt();
-					img.download(n);
+					img.fetchByID(n);
 				}
-//				for (int i = 1; i <= 5; i++) {
-//					img.download(i);
-//				}
 				System.out.println("圖片下載成功!\n");
 				openList();
 				break;

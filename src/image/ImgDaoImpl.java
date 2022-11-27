@@ -14,15 +14,16 @@ import java.sql.SQLException;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import system.SystemConstant;
+
 public class ImgDaoImpl implements ImgDao {
-	String dburl = "jdbc:sqlserver://localhost:1433;databaseName=Project;user=sa;password=sa123456";
 
 	@Override
 	public void insert(String fileName) throws FileNotFoundException, IOException, SQLException {
-		File dir = new File("./projectimg");
+		File dir = new File(SystemConstant.getProjectimg());
 		String sql = "INSERT INTO ProjectImage(FileName, FileContent, FileType) VALUES (?,?,?);";
 		if (!dir.exists()) {
-			dir.mkdir();
+			dir.mkdirs();
 		}
 		File imgPath = new File(dir, fileName);
 		ImgBean img;
@@ -31,7 +32,7 @@ public class ImgDaoImpl implements ImgDao {
 		) {
 
 			img = new ImgBean(fileName, new SerialBlob(bis.readAllBytes()), fileName.substring(fileName.indexOf(".")));
-			try (Connection con = DriverManager.getConnection(dburl);
+			try (Connection con = DriverManager.getConnection(SystemConstant.getDburl());
 					PreparedStatement stmt = con.prepareStatement(sql);
 
 			) {
@@ -44,16 +45,15 @@ public class ImgDaoImpl implements ImgDao {
 		}
 
 	}
-
 	@Override
-	public void download(int imgID) throws SQLException, FileNotFoundException, IOException {
+	public void fetchByID(int imgID) throws SQLException, FileNotFoundException, IOException {
 		// TODO Auto-generated method stub
 		String sql = "SELECT * FROM ProjectImage WHERE FileID = ?";
-		File dir = new File("./imgoutput");
+		File dir = new File(SystemConstant.getImgoutput());
 		if (!dir.exists()) {
-			dir.mkdir();
+			dir.mkdirs();
 		} 
-		try (Connection con = DriverManager.getConnection(dburl); PreparedStatement stmt = con.prepareStatement(sql);) {
+		try (Connection con = DriverManager.getConnection(SystemConstant.getDburl()); PreparedStatement stmt = con.prepareStatement(sql);) {
 			stmt.setInt(1, imgID);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -70,5 +70,7 @@ public class ImgDaoImpl implements ImgDao {
 		}
 
 	}
+
+	
 
 }

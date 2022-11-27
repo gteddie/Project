@@ -3,18 +3,18 @@ package stockData;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 
 public interface StockDao {
 
-	public void createTable() throws IOException, SQLException;
+	public void prepareTable() throws IOException, SQLException;
 
-	public void readData(int key) throws SQLException, FileNotFoundException, IOException;
+	public void read(int key) throws SQLException, FileNotFoundException, IOException;
 
-	public void deleteData(String stockName) throws SQLException;
-	
-	public void deleteData(Double closePrice);
-	
-//	public void deleteData(Double monAvgPrice);
-	
-	public void insertData(StockBean bean) throws SQLException;
+	public void delete(String stockName, String delType) throws SQLException;
+
+	public void insert(StockBean bean) throws SQLException;
+
+	public void insertBatch(Collection<StockBean> beanCollection) throws SQLException;
+
 }

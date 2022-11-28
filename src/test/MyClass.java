@@ -1,232 +1,394 @@
 package test;
 
-//Java program to implement
-//a Simple Registration Form
-//using Java Swing
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.sql.SQLException;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import downloader.ImgDownloader;
+import downloader.StockDownloader;
+import image.ImgDao;
+import image.ImgDaoImpl;
+import stockData.StockDaoImpl;
+import stockGUI.Logo;
+import stockImg.StockImgDaoImpl;
 
 class MyClass extends JFrame implements ActionListener {
 
-	// Components of the Form
 	private Container c;
 	private JLabel title;
-	private JLabel name;
-	private JTextField tname;
-	private JLabel mno;
-	private JTextField tmno;
-	private JLabel gender;
-	private JRadioButton male;
-	private JRadioButton female;
-	private ButtonGroup gengp;
-	private JLabel dob;
-	private JComboBox date;
-	private JComboBox month;
-	private JComboBox year;
-	private JLabel add;
-	private JTextArea tadd;
-	private JCheckBox term;
-	private JButton sub;
-	private JButton reset;
-	private JTextArea tout;
-	private JLabel res;
-	private JTextArea resadd;
+	private JTextArea console;
+	private JLabel read;
+	private JTextField readText;
+	private JButton readBtn;
+	private JLabel delete;
+	private JTextField deleteText;
+	private JButton deleteBtn;
+	private JLabel downPic;
+	private JTextField downPicText;
+	private JButton downPicBtn;
+	private JLabel inOut;
+	private JTextField inOutText;
+	private JButton inBtn;
+	private JButton outBtn;
+	private JLabel downK;
+	private JTextField downKText;
+	private JButton downKBtn;
+	private JLabel inK;
+	private JTextField inKText;
+	private JButton inKBtn;
+	private JLabel outK;
+	private JTextField outKText;
+	private JButton outKBtn;
+	private JButton refreshBtn;
+	String font = "微軟正黑體";
+	int fontSize = 20;
+	StockDaoImpl dao = new StockDaoImpl();
+	StockImgDaoImpl dao2 = new StockImgDaoImpl();
+	ImgDao img = new ImgDaoImpl();
+	ImgDownloader imgD = new ImgDownloader();
+	StockDownloader SD = new StockDownloader();
 
-	private String dates[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-			"17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
-	private String months[] = { "Jan", "feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sup", "Oct", "Nov", "Dec" };
-	private String years[] = { "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005",
-			"2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018",
-			"2019" };
+//////////////////////////////////////////////	
 
-	// constructor, to initialize the components
-	// with default values.
-	public MyClass()
- {
-     setTitle("Registration Form");
-     setBounds(300, 90, 900, 600);
-     setDefaultCloseOperation(EXIT_ON_CLOSE);
-     setResizable(false);
+	public MyClass() throws IOException, SQLException {
+		dao.prepareTable();
+		dao2.prepareTable();
+		img.prepareTable();
+		setTitle("JDBC資料查詢");
+		setBounds(300, 90, 900, 600);
+		setSize(1200, 700);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		ImageIcon image = new ImageIcon("../Project/stocklogo.jpg");
+		setIconImage(image.getImage());
+		getContentPane().setBackground(new Color(40, 46, 62));
+		Logo logo = new Logo();
+		logo.setBounds(1040, 0, 130, 130);
+		c = getContentPane();
+		c.add(logo);
+		c.setLayout(null);
 
-     c = getContentPane();
-     c.setLayout(null);
+		title = new JLabel("功能表單");
+		title.setFont(new Font(font, Font.PLAIN, 25));
+		title.setSize(300, 25);
+		title.setLocation(80, 40);
+		title.setForeground(Color.white);
+		c.add(title);
+///////////////////////////////////
+		read = new JLabel("查詢股票(ID): ");
+		read.setFont(new Font(font, Font.PLAIN, 20));
+		read.setSize(150, 20);
+		read.setLocation(80, 120);
+		read.setForeground(Color.white);
+		c.add(read);
 
-     title = new JLabel("Registration Form");
-     title.setFont(new Font("Arial", Font.PLAIN, 30));
-     title.setSize(300, 30);
-     title.setLocation(300, 30);
-     c.add(title);
+		readText = new JTextField();
+		readText.setFont(new Font(font, Font.PLAIN, 15));
+		readText.setSize(100, 20);
+		readText.setLocation(210, 120);
+		c.add(readText);
 
-     name = new JLabel("Name");
-     name.setFont(new Font("Arial", Font.PLAIN, 20));
-     name.setSize(100, 20);
-     name.setLocation(100, 100);
-     c.add(name);
+		readBtn = new JButton("查詢");
+		readBtn.setFont(new Font(font, Font.BOLD, 15));
+		readBtn.setSize(65, 20);
+		readBtn.setBackground(new Color(44, 133, 128));
+		readBtn.setForeground(Color.white);
+		readBtn.setLocation(330, 120);
+		readBtn.addActionListener(this);
+		c.add(readBtn);
+/////////////////////////////////////////////////////////
+		delete = new JLabel("刪除股票(名稱): ");
+		delete.setFont(new Font(font, Font.PLAIN, 20));
+		delete.setSize(150, 20);
+		delete.setLocation(80, 170);
+		delete.setForeground(Color.white);
+		c.add(delete);
 
-     tname = new JTextField();
-     tname.setFont(new Font("Arial", Font.PLAIN, 15));
-     tname.setSize(190, 20);
-     tname.setLocation(200, 100);
-     c.add(tname);
+		deleteText = new JTextField();
+		deleteText.setFont(new Font(font, Font.PLAIN, 15));
+		deleteText.setSize(190, 20);
+		deleteText.setLocation(230, 170);
+		c.add(deleteText);
 
-     mno = new JLabel("Mobile");
-     mno.setFont(new Font("Arial", Font.PLAIN, 20));
-     mno.setSize(100, 20);
-     mno.setLocation(100, 150);
-     c.add(mno);
+		deleteBtn = new JButton("刪除");
+		deleteBtn.setFont(new Font(font, Font.BOLD, 15));
+		deleteBtn.setSize(65, 20);
+		deleteBtn.setBackground(new Color(44, 133, 128));
+		deleteBtn.setForeground(Color.white);
+		deleteBtn.setLocation(440, 170);
+		deleteBtn.addActionListener(this);
+		c.add(deleteBtn);
+		////////////////////////////////////////////////////////
+		downPic = new JLabel("下載圖片(URL): ");
+		downPic.setFont(new Font(font, Font.PLAIN, 20));
+		downPic.setSize(150, 20);
+		downPic.setLocation(80, 220);
+		downPic.setForeground(Color.white);
+		c.add(downPic);
 
-     tmno = new JTextField();
-     tmno.setFont(new Font("Arial", Font.PLAIN, 15));
-     tmno.setSize(150, 20);
-     tmno.setLocation(200, 150);
-     c.add(tmno);
+		downPicText = new JTextField();
+		downPicText.setFont(new Font(font, Font.PLAIN, 15));
+		downPicText.setSize(340, 20);
+		downPicText.setLocation(80, 250);
+		c.add(downPicText);
 
-     gender = new JLabel("Gender");
-     gender.setFont(new Font("Arial", Font.PLAIN, 20));
-     gender.setSize(100, 20);
-     gender.setLocation(100, 200);
-     c.add(gender);
+		downPicBtn = new JButton("下載");
+		downPicBtn.setFont(new Font(font, Font.BOLD, 15));
+		downPicBtn.setSize(65, 20);
+		downPicBtn.setBackground(new Color(44, 133, 128));
+		downPicBtn.setForeground(Color.white);
+		downPicBtn.setLocation(440, 250);
+		downPicBtn.addActionListener(this);
+		c.add(downPicBtn);
+		////////////////////////////////////////////////////////////
+		inOut = new JLabel("匯出(ID)/匯入: ");
+		inOut.setFont(new Font(font, Font.PLAIN, 20));
+		inOut.setSize(150, 20);
+		inOut.setLocation(80, 300);
+		inOut.setForeground(Color.white);
+		c.add(inOut);
 
-     male = new JRadioButton("Male");
-     male.setFont(new Font("Arial", Font.PLAIN, 15));
-     male.setSelected(true);
-     male.setSize(75, 20);
-     male.setLocation(200, 200);
-     c.add(male);
+		inOutText = new JTextField();
+		inOutText.setFont(new Font(font, Font.PLAIN, 15));
+		inOutText.setSize(100, 20);
+		inOutText.setLocation(230, 300);
+		c.add(inOutText);
 
-     female = new JRadioButton("Female");
-     female.setFont(new Font("Arial", Font.PLAIN, 15));
-     female.setSelected(false);
-     female.setSize(80, 20);
-     female.setLocation(275, 200);
-     c.add(female);
+		outBtn = new JButton("匯出");
+		outBtn.setFont(new Font(font, Font.BOLD, 15));
+		outBtn.setSize(65, 20);
+		outBtn.setBackground(new Color(44, 133, 128));
+		outBtn.setForeground(Color.white);
+		outBtn.setLocation(350, 300);
+		outBtn.addActionListener(this);
+		c.add(outBtn);
 
-     gengp = new ButtonGroup();
-     gengp.add(male);
-     gengp.add(female);
+		inBtn = new JButton("匯入");
+		inBtn.setFont(new Font(font, Font.BOLD, 15));
+		inBtn.setSize(65, 20);
+		inBtn.setBackground(new Color(44, 133, 128));
+		inBtn.setForeground(Color.white);
+		inBtn.setLocation(425, 300);
+		inBtn.addActionListener(this);
+		c.add(inBtn);
+///////////////////////////////////////////////////////     
+		downK = new JLabel("下載K線(代碼): ");
+		downK.setFont(new Font(font, Font.PLAIN, 20));
+		downK.setSize(150, 20);
+		downK.setLocation(80, 350);
+		downK.setForeground(Color.white);
+		c.add(downK);
 
-     dob = new JLabel("DOB");
-     dob.setFont(new Font("Arial", Font.PLAIN, 20));
-     dob.setSize(100, 20);
-     dob.setLocation(100, 250);
-     c.add(dob);
+		downKText = new JTextField();
+		downKText.setFont(new Font(font, Font.PLAIN, 15));
+		downKText.setSize(100, 20);
+		downKText.setLocation(230, 350);
+		c.add(downKText);
 
-     date = new JComboBox(dates);
-     date.setFont(new Font("Arial", Font.PLAIN, 15));
-     date.setSize(50, 20);
-     date.setLocation(200, 250);
-     c.add(date);
+		downKBtn = new JButton("下載");
+		downKBtn.setFont(new Font(font, Font.BOLD, 15));
+		downKBtn.setSize(65, 20);
+		downKBtn.setBackground(new Color(44, 133, 128));
+		downKBtn.setForeground(Color.white);
+		downKBtn.setLocation(350, 350);
+		downKBtn.addActionListener(this);
+		c.add(downKBtn);
+//////////////////////////////////////////////////     
+		inK = new JLabel("匯入K線(代碼)");
+		inK.setFont(new Font(font, Font.PLAIN, 20));
+		inK.setSize(150, 20);
+		inK.setLocation(80, 400);
+		inK.setForeground(Color.white);
+		c.add(inK);
 
-     month = new JComboBox(months);
-     month.setFont(new Font("Arial", Font.PLAIN, 15));
-     month.setSize(60, 20);
-     month.setLocation(250, 250);
-     c.add(month);
+		inKText = new JTextField();
+		inKText.setFont(new Font(font, Font.PLAIN, 15));
+		inKText.setSize(100, 20);
+		inKText.setLocation(230, 400);
+		c.add(inKText);
 
-     year = new JComboBox(years);
-     year.setFont(new Font("Arial", Font.PLAIN, 15));
-     year.setSize(60, 20);
-     year.setLocation(320, 250);
-     c.add(year);
+		inKBtn = new JButton("匯入");
+		inKBtn.setFont(new Font(font, Font.BOLD, 15));
+		inKBtn.setSize(65, 20);
+		inKBtn.setBackground(new Color(44, 133, 128));
+		inKBtn.setForeground(Color.white);
+		inKBtn.setLocation(350, 400);
+		inKBtn.addActionListener(this);
+		c.add(inKBtn);
+///////////////////////////////////////////////////////////    
+		outK = new JLabel("匯出K線(代碼)");
+		outK.setFont(new Font(font, Font.PLAIN, 20));
+		outK.setSize(150, 20);
+		outK.setLocation(80, 450);
+		outK.setForeground(Color.white);
+		c.add(outK);
 
-     add = new JLabel("Address");
-     add.setFont(new Font("Arial", Font.PLAIN, 20));
-     add.setSize(100, 20);
-     add.setLocation(100, 300);
-     c.add(add);
+		outKText = new JTextField();
+		outKText.setFont(new Font(font, Font.PLAIN, 15));
+		outKText.setSize(100, 20);
+		outKText.setLocation(230, 450);
+		c.add(outKText);
 
-     tadd = new JTextArea();
-     tadd.setFont(new Font("Arial", Font.PLAIN, 15));
-     tadd.setSize(200, 75);
-     tadd.setLocation(200, 300);
-     tadd.setLineWrap(true);
-     c.add(tadd);
+		outKBtn = new JButton("匯出");
+		outKBtn.setFont(new Font(font, Font.BOLD, 15));
+		outKBtn.setSize(65, 20);
+		outKBtn.setBackground(new Color(44, 133, 128));
+		outKBtn.setForeground(Color.white);
+		outKBtn.setLocation(350, 450);
+		outKBtn.addActionListener(this);
+		c.add(outKBtn);
+/////////////////////////////////////////////////////////////		
 
-     term = new JCheckBox("Accept Terms And Conditions.");
-     term.setFont(new Font("Arial", Font.PLAIN, 15));
-     term.setSize(250, 20);
-     term.setLocation(150, 400);
-     c.add(term);
+		refreshBtn = new JButton("刷新面板");
+		refreshBtn.setFont(new Font(font, Font.BOLD, 20));
+		refreshBtn.setSize(150, 25);
+		refreshBtn.setBackground(new Color(44, 133, 128));
+		refreshBtn.setForeground(Color.white);
+		refreshBtn.setLocation(80, 500);
+		refreshBtn.addActionListener(this);
+		c.add(refreshBtn);
+/////////////////////////////////////////////////////////////     
 
-     sub = new JButton("Submit");
-     sub.setFont(new Font("Arial", Font.PLAIN, 15));
-     sub.setSize(100, 20);
-     sub.setLocation(150, 450);
-     sub.addActionListener(this);
-     c.add(sub);
+		console = new JTextArea();
+		console.setFont(new Font(font, Font.PLAIN, 16));
+		console.setSize(400, 500);
+		console.setLocation(600, 80);
+		console.setLineWrap(true);
+		console.setEditable(false);
+		console.setBackground(new Color(16, 25, 32));
+		console.setForeground(Color.white);
+		c.add(console);
 
-     reset = new JButton("Reset");
-     reset.setFont(new Font("Arial", Font.PLAIN, 15));
-     reset.setSize(100, 20);
-     reset.setLocation(270, 450);
-     reset.addActionListener(this);
-     c.add(reset);
+		setVisible(true);
 
-     tout = new JTextArea();
-     tout.setFont(new Font("Arial", Font.PLAIN, 15));
-     tout.setSize(300, 400);
-     tout.setLocation(500, 100);
-     tout.setLineWrap(true);
-     tout.setEditable(false);
-     c.add(tout);
+		PrintStream outStream = new PrintStream(new TextAreaOutputStream(console), false, "UTF-8");
+		console.setFont(new Font("Arial", 0, 14));
 
-     res = new JLabel("");
-     res.setFont(new Font("Arial", Font.PLAIN, 20));
-     res.setSize(500, 25);
-     res.setLocation(100, 500);
-     c.add(res);
+		System.setOut(outStream);
+		System.setErr(outStream);
 
-     resadd = new JTextArea();
-     resadd.setFont(new Font("Arial", Font.PLAIN, 15));
-     resadd.setSize(200, 75);
-     resadd.setLocation(580, 175);
-     resadd.setLineWrap(true);
-     c.add(resadd);
-
-     setVisible(true);
- }
+	}
 
 	// method actionPerformed()
 	// to get the action performed
 	// by the user and act accordingly
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == sub) {
-			if (term.isSelected()) {
-				String data1;
-				String data = "Name : " + tname.getText() + "\n" + "Mobile : " + tmno.getText() + "\n";
-				if (male.isSelected())
-					data1 = "Gender : Male" + "\n";
-				else
-					data1 = "Gender : Female" + "\n";
-				String data2 = "DOB : " + (String) date.getSelectedItem() + "/" + (String) month.getSelectedItem() + "/"
-						+ (String) year.getSelectedItem() + "\n";
 
-				String data3 = "Address : " + tadd.getText();
-				tout.setText(data + data1 + data2 + data3);
-				tout.setEditable(false);
-				res.setText("Registration Successfully..");
-			} else {
-				tout.setText("");
-				resadd.setText("");
-				res.setText("Please accept the" + " terms & conditions..");
+		if (e.getSource() == readBtn) {
+			try {
+				int key = Integer.parseInt(readText.getText());
+				readText.setText("");
+				dao.read(key);
+
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+		} else if (e.getSource() == deleteBtn) {
+			String name = deleteText.getText();
+			try {
+				dao.delete(name, "name");
+				deleteText.setText("");
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		} else if (e.getSource() == downPicBtn) {
+			String url_ = downPicText.getText();
+			if (url_.endsWith(".jpg") || url_.endsWith(".png") || url_.endsWith(".gif")) {
+				try {
+					imgD.downloadImg(url_);
+					downPicText.setText("");
+				} catch (Exception ex) {
+					System.out.println("fail to find image from " + url_);
+				}
+			} else {
+				System.out.println("invalid image input resource, plaese select url ends with jpg, png or gif!");
+			}
+
+		} else if (e.getSource() == inBtn) {
+			try {
+				img.insertBatch();
+			} catch (FileNotFoundException e1) {
+				System.out.println("Couldn't find file.....");
+				e1.printStackTrace();
+			} catch (IOException e1) {
+
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		} else if (e.getSource() == outBtn) {
+			String imgId = inOutText.getText();
+			try {
+				img.fetchByID(Integer.parseInt(imgId));
+				inOutText.setText("");
+			} catch (NumberFormatException e1) {
+				System.out.println("Invalid ImgId......");
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (e.getSource() == downKBtn) {
+			String stockNum = downKText.getText();
+			try {
+				SD.downloadStockImg(stockNum);
+				downKText.setText("");
+			} catch (IOException e1) {
+				System.out.println("fail to download candlestick chart, try another stock Number!");
+				
+			}
+
+		} else if (e.getSource() == inKBtn) {
+			String stockNum = inKText.getText();
+			try {
+				dao2.uploadImg(stockNum);
+				inKText.setText("");
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (e.getSource() == outKBtn) {
+			String stockNum = outKText.getText();
+			try {
+				dao2.fetchImg(stockNum);
+				outKText.setText("");
+			} catch (SQLException e1) {
+				System.out.println("fail to fetch image from database......");
+			} catch (IOException e1) {
+				System.out.println("fail to write image to file......");
+			}
+		} else if(e.getSource() == refreshBtn) {
+			console.setText("");
 		}
 
-		else if (e.getSource() == reset) {
-			String def = "";
-			tname.setText(def);
-			tadd.setText(def);
-			tmno.setText(def);
-			res.setText(def);
-			tout.setText(def);
-			term.setSelected(false);
-			date.setSelectedIndex(0);
-			month.setSelectedIndex(0);
-			year.setSelectedIndex(0);
-			resadd.setText(def);
-		}
 	}
 }
-

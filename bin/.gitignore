@@ -1,7 +1,5 @@
-/image/
-/system/
-/downloader/
-/stockData/
 /test/
+/image/
+/stockData/
+/downloader/
 /stockImg/
-/stockGUI/

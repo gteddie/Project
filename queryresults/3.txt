@@ -1,0 +1,1 @@
+stockId=3, stockNum=0052, stockName=富邦科技, closePrice=97.6, monAvgPrice=92.41

@@ -1,0 +1,1 @@
+stockId=6, stockNum=0056, stockName=元大高股息, closePrice=25.32, monAvgPrice=24.82

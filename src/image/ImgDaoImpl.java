@@ -82,7 +82,7 @@ public class ImgDaoImpl implements ImgDao {
 			insert(fileName);
 			count++;
 		}
-		System.out.println(count + "張圖片匯入成功!\n");
+		System.out.println(count + " images inserted successfully!\n");
 
 	}
 
@@ -117,7 +117,7 @@ public class ImgDaoImpl implements ImgDao {
 			}
 
 		}
-		System.out.println("圖片匯出成功!\n");
+		System.out.println("Successfully fetch image by id = "+imgID+"!\n");
 
 	}
 

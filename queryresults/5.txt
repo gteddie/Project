@@ -1,0 +1,1 @@
+stockId=5, stockNum=0055, stockName=元大MSCI金融, closePrice=21.56, monAvgPrice=21.39

@@ -133,7 +133,7 @@ public class StockDaoImpl implements StockDao {
 				}
 
 			}
-			System.out.println("資料查詢成功!\n");
+			System.out.println("Successfully read data!\n");
 		}
 
 	}
@@ -168,7 +168,7 @@ public class StockDaoImpl implements StockDao {
 			}
 
 		}
-		System.out.println("資料刪除成功!\n");
+		System.out.println("Successfully delete data!\n");
 
 	}
 

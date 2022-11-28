@@ -34,6 +34,6 @@ public class ImgDownloader {
 			ImgBean bean = new ImgBean(fileName, fileContent, fileType);
 			Utilities.CreateImageByBean(bean, new File(SystemConstant.getProjectimg()));
 		}
-		System.out.println("圖片下載成功");
+		System.out.println("Successfully download image!");
 	}
 }

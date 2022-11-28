@@ -55,7 +55,7 @@ public class StockDaoImpl implements StockDao {
 				stmtI.setDouble(3, bean.getClosePrice());
 			}
 			;
-			if (bean.getClosePrice() == null) {
+			if (bean.getMonAvgPrice() == null) {
 				stmtI.setNull(4, Types.DOUBLE);
 			} else {
 				stmtI.setDouble(4, bean.getMonAvgPrice());
@@ -66,6 +66,7 @@ public class StockDaoImpl implements StockDao {
 		}
 
 	}
+
 	@Override
 	public void insertBatch(Collection<StockBean> beanCollection) throws SQLException {
 		String insertSql = "INSERT INTO STOCK(StockNum, StockName, ClosePrice, MonAvgPrice) VALUES(?,?,?,?)";
@@ -83,7 +84,7 @@ public class StockDaoImpl implements StockDao {
 					stmtI.setDouble(3, bean.getClosePrice());
 				}
 				;
-				if (bean.getClosePrice() == null) {
+				if (bean.getMonAvgPrice() == null) {
 					stmtI.setNull(4, Types.DOUBLE);
 				} else {
 					stmtI.setDouble(4, bean.getMonAvgPrice());
@@ -115,19 +116,24 @@ public class StockDaoImpl implements StockDao {
 			if (!dir.exists()) {
 				dir.mkdir();
 			}
-			if (rs.next()) {
+			if (!rs.next()) {
+				System.out.println("Couldn't find stock with stockid = " + key);
+				return;
+			} else {
 				StockBean bean = new StockBean(rs.getInt("StockId"), rs.getString("StockNum"),
 						rs.getString("StockName"), rs.getDouble("ClosePrice"), rs.getDouble("MonAVGPrice"));
-				System.out.println(bean.toString().substring(10));
+				String beanString = bean.toString();
+				System.out.println(beanString.substring(10,beanString.indexOf("]")));
 				File f = new File(dir, bean.getStockId() + ".txt");
 				try (FileOutputStream fos = new FileOutputStream(f);
 						OutputStreamWriter osw = new OutputStreamWriter(fos);
 						PrintWriter pw = new PrintWriter(osw);) {
-					pw.write(bean.toString());
+					pw.write(bean.toString().substring(10,beanString.indexOf("]")));
 
 				}
 
 			}
+			System.out.println("資料查詢成功!\n");
 		}
 
 	}
@@ -155,12 +161,14 @@ public class StockDaoImpl implements StockDao {
 			int num = stmt.executeUpdate();
 			if (num == 0) {
 				System.out.println("Couldn't find data with \"" + stockName + "\" in their stockName");
+				return;
 			} else {
 
 				System.out.println(num + " of data with \"" + stockName + "\" in their StockName were deleted");
 			}
 
 		}
+		System.out.println("資料刪除成功!\n");
 
 	}
 

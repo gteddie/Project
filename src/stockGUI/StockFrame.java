@@ -10,7 +10,7 @@ public class StockFrame extends JFrame {
 	public StockFrame() {
 		this.setTitle("Stockdata access tool");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // make closing window terminate the program as well
-		// this.setResizable(false); //prevent this from being resize
+		this.setResizable(false); //prevent this from being resize
 
 		this.setSize(1200, 700);
 		this.setVisible(true);

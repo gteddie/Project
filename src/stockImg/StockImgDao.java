@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public interface StockImgDao {
-	public void prepareImgTable() throws IOException, SQLException;
+	public void prepareTable() throws IOException, SQLException;
 
 	public void uploadImg(StockImgBean bean) throws SQLException;
 

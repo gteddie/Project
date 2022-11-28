@@ -17,8 +17,8 @@ public class Logo extends JLabel {
 		this.setVerticalTextPosition(JLabel.BOTTOM); // TOP CENTER BOTTOM of the image icon
 		this.setForeground(new Color(0xFFFFFF)); // set font color
 		this.setFont(new Font("Arial", Font.BOLD, 15)); // set font
-		this.setVerticalAlignment(JLabel.TOP);
-		this.setHorizontalAlignment(JLabel.RIGHT);
+		this.setVerticalAlignment(JLabel.TOP); //border layout 
+		this.setHorizontalAlignment(JLabel.RIGHT);//border layout
 		this.setIconTextGap(-20); // set gap of text to img
 	}
 }

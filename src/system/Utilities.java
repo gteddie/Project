@@ -3,6 +3,7 @@ package system;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Blob;
@@ -45,7 +46,19 @@ public class Utilities {
 
 	}
 
-	public void CreateImageByBean(ImgBean bean) {
+	public static void CreateImageByBean(ImgBean bean, File dir)
+			throws FileNotFoundException, IOException, SQLException {
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		File file = new File(dir, bean.getFileName() + "." + bean.getFileType());
+		try (BufferedInputStream bis = new BufferedInputStream(bean.getFileContent().getBinaryStream());
+				FileOutputStream fos = new FileOutputStream(file);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);) {
 
+			byte[] image = bis.readAllBytes();
+			bos.write(image);
+
+		}
 	}
 }

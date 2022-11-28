@@ -40,10 +40,10 @@ public class StockDownloader {
 			String[] data;
 			br.readLine();
 			int count = 0;
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null) { 
 				data = line.replace("\"", "").split(",");
-				Double closePrice = data[2] == "" ? null : Double.parseDouble(data[2]);
-				Double MonAvgPrice = data[3] == "" ? null : Double.parseDouble(data[3]);
+				Double closePrice = data[2].equals("") ? null : Double.parseDouble(data[2]);
+				Double MonAvgPrice = data[3].equals("") ? null : Double.parseDouble(data[3]);
 				StockBean bean = new StockBean(null, data[0], data[1], closePrice, MonAvgPrice);
 				beanList.add(bean);
 				count++;

@@ -1,11 +1,10 @@
-package test;
+package stockGUI;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 
-public class Driver {
+public class StartGUI {
 	public static void main(String[] args) throws IOException, SQLException {
-		MainGUITest f = new MainGUITest();
+		MainGUI f = new MainGUI();
 	}
 }

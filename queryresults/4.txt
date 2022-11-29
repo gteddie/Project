@@ -1,1 +1,0 @@
-stockId=4, stockNum=0053, stockName=元大電子, closePrice=54.8, monAvgPrice=52.95

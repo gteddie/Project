@@ -1,1 +1,0 @@
-stockId=1, stockNum=0050, stockName=元大台灣50, closePrice=114.35, monAvgPrice=108.81

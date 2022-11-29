@@ -78,6 +78,7 @@ public class StockDownloader {
 		for (String type : picType) {
 			downloadStockImg(stockNum, type);
 		}
+		System.out.println("Successfully download stock image from internet!");
 	}
 
 	public StockImgBean downloadStockImgBean(String stockNum) throws IOException, SerialException, SQLException {

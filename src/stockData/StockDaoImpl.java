@@ -92,9 +92,9 @@ public class StockDaoImpl implements StockDao {
 				stmtI.addBatch();
 				num++;
 
-				if (num % 500 == 0 || num == beanCollection.size()) {
+				if (num % 1000 == 0 || num == beanCollection.size()) {
 					stmtI.executeBatch();
-					System.out.printf("number of stocks updated: %d%n", num);
+					System.out.printf("number of downloaded stocks upload to database: %d%n", num);
 
 				}
 			}

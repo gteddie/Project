@@ -1,4 +1,4 @@
-package test;
+package stockGUI;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
 
+import javax.sql.rowset.serial.SerialException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,11 +23,14 @@ import downloader.StockDownloader;
 import image.ImgDao;
 import image.ImgDaoImpl;
 import stockData.StockDaoImpl;
-import stockGUI.Logo;
 import stockImg.StockImgDaoImpl;
 
-class MyClass extends JFrame implements ActionListener {
+class MainGUI extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Container c;
 	private JLabel title;
 	private JTextArea console;
@@ -63,7 +67,7 @@ class MyClass extends JFrame implements ActionListener {
 
 //////////////////////////////////////////////	
 
-	public MyClass() throws IOException, SQLException {
+	public MainGUI() throws IOException, SQLException {
 		dao.prepareTable();
 		dao2.prepareTable();
 		img.prepareTable();
@@ -276,7 +280,6 @@ class MyClass extends JFrame implements ActionListener {
 
 		PrintStream outStream = new PrintStream(new TextAreaOutputStream(console), false, "UTF-8");
 		console.setFont(new Font("Arial", 0, 14));
-
 		System.setOut(outStream);
 		System.setErr(outStream);
 
@@ -294,11 +297,9 @@ class MyClass extends JFrame implements ActionListener {
 				dao.read(key);
 
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("fail to write query file......");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("fail to query database......");
 			}
 		} else if (e.getSource() == deleteBtn) {
 			String name = deleteText.getText();
@@ -306,19 +307,24 @@ class MyClass extends JFrame implements ActionListener {
 				dao.delete(name, "name");
 				deleteText.setText("");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("fail to delete data in database......");
 			}
 
 		} else if (e.getSource() == downPicBtn) {
 			String url_ = downPicText.getText();
 			if (url_.endsWith(".jpg") || url_.endsWith(".png") || url_.endsWith(".gif")) {
-				try {
-					imgD.downloadImg(url_);
-					downPicText.setText("");
-				} catch (Exception ex) {
-					System.out.println("fail to find image from " + url_);
-				}
+				
+					try {
+						imgD.downloadImg(url_);
+						downPicText.setText("");
+					} catch (SerialException e1) {
+						System.out.println("Serial object issues......");
+					} catch (IOException e1) {
+						System.out.println("fail to find output path......");
+					} catch (SQLException e1) {
+						System.out.println("fail to pass data......");
+					}
+			
 			} else {
 				System.out.println("invalid image input resource, plaese select url ends with jpg, png or gif!");
 			}
@@ -327,14 +333,11 @@ class MyClass extends JFrame implements ActionListener {
 			try {
 				img.insertBatch();
 			} catch (FileNotFoundException e1) {
-				System.out.println("Couldn't find file.....");
-				e1.printStackTrace();
+				System.out.println("fail to find input files......");
 			} catch (IOException e1) {
-
-				e1.printStackTrace();
+				System.out.println("fail to create stream......");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("fail to insert to database......");
 			}
 
 		} else if (e.getSource() == outBtn) {
@@ -345,20 +348,19 @@ class MyClass extends JFrame implements ActionListener {
 			} catch (NumberFormatException e1) {
 				System.out.println("Invalid ImgId......");
 			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("invalid output directory......");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("fail to find image......");
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("fail to write image......");
 			}
 		} else if (e.getSource() == downKBtn) {
 			String stockNum = downKText.getText();
 			try {
 				SD.downloadStockImg(stockNum);
 				downKText.setText("");
+				JFrame picFrame = new PicFrame(stockNum);
+				picFrame.setVisible(true);
 			} catch (IOException e1) {
 				System.out.println("fail to download candlestick chart, try another stock Number!");
 				
@@ -370,17 +372,18 @@ class MyClass extends JFrame implements ActionListener {
 				dao2.uploadImg(stockNum);
 				inKText.setText("");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("fail to insert to database......");
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("couldn't find that stock on internet......");
 			}
 		} else if (e.getSource() == outKBtn) {
 			String stockNum = outKText.getText();
 			try {
 				dao2.fetchImg(stockNum);
 				outKText.setText("");
+				JFrame picFrame3 = new PicFrame(stockNum);
+				picFrame3.setVisible(true);
 			} catch (SQLException e1) {
 				System.out.println("fail to fetch image from database......");
 			} catch (IOException e1) {

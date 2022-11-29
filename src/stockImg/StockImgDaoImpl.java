@@ -69,8 +69,8 @@ public class StockImgDaoImpl implements StockImgDao {
 			stmt.setString(1, stockNum);
 			ResultSet rs = stmt.executeQuery();
 			if (!rs.next()) {
-				System.out.println("Couldn't find stock image with stockNum = " + stockNum);
-				return;
+//				System.out.println("Couldn't find stock image with stockNum = " + stockNum);
+				throw new SQLException("Couldn't find stock image with stockNum = " + stockNum);
 			}else {
 				rs.beforeFirst();
 			}

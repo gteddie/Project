@@ -7,6 +7,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Logo extends JLabel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Logo() {
 
 		ImageIcon logo = new ImageIcon("../Project/stocklogo3.png");

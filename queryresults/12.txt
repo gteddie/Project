@@ -1,1 +1,0 @@
-stockId=12, stockNum=006206, stockName=元大上證50, closePrice=27.44, monAvgPrice=28.06

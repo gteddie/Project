@@ -1,1 +1,0 @@
-stockId=20, stockNum=00636, stockName=國泰中國A50, closePrice=19.11, monAvgPrice=19.66
